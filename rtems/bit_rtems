@@ -135,6 +135,7 @@ if [ x${BSP_TO_TEST} != x ] ; then
       #   ;;
       pc386) ENABLE_BSP="--enable-rtemsbsp=pc386 BSP_VIDEO_80x50=1" ;;
       # sis) ENABLE_BSP="${ENABLE_BSP} CONSOLE_USE_INTERRUPTS=1" ;;
+      sis) ENABLE_BSP="${ENABLE_BSP} SIMSPARC_FAST_IDLE=1" ;;
       *)     ENABLE_BSP=--enable-rtemsbsp="${BSP_TO_TEST}" ;;
     esac
 
