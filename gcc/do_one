@@ -27,7 +27,7 @@ if [ ! -r ${vfile} ] ; then
 fi
 
 source ${vfile}
-
+export PATH="${INSTALL}/bin:${PATH}"
 
 ######################## Set defaults #############################
 # Remove Build Directories
