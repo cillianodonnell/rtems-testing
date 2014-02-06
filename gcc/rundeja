@@ -28,6 +28,12 @@ case $1 in
     DEJABSP=edb7312
     BSP_SIM=edb7312
     ;;
+  realview_pbx_a9_qemu)
+    CPU=arm
+    BSP=realview_pbx_a9_qemu
+    DEJABSP=realview_pbx_a9_qemu
+    BSP_SIM=realview_pbx_a9_qemu
+    ;;
   lm32_evr) 
     CPU=lm32
     BSP=lm32_evr
