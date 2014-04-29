@@ -371,13 +371,6 @@ runtest()
         echo -n "killed due to BSP fault... "
         break
       fi
-      # check for cross platform messages which indicate program ended
-      checkGenericExits ${logfile} #>/dev/null 2>&1
-      if [ $? -ne 0 ] ; then
-        killpid ${pid}
-        echo -n "killed due to generic exit... "
-        break
-      fi
     else
       # done normally
       break
