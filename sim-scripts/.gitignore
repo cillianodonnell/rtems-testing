@@ -40,6 +40,8 @@ m32csim
 m32csim-gdb
 m32rsim
 m32rsim-gdb
+or1ksim
+or1ksim-gdb
 pc386
 psim
 psim-gdb
