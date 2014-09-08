@@ -5,8 +5,8 @@ SKYEYE_SCRIPTS=ant5206 bf537Stamp-skyeye csb337 csb350 csb360 edb7312 \
   ezkit533-skyeye gumstix rtl22xx smdk2410 leon2-skyeye
 
 TSIM_SCRIPTS=erc32 leon2 leon3
-QEMU_SCRIPTS=pc386 qemuppc qemu-gumstix qemu-leon2 qemu-lm32_evr uC5282 \
-  lm3s6965 realview_pbx_a9_qemu realview_pbx_a9_qemu_smp \
+QEMU_SCRIPTS=pc386 qemuppc qemu-gumstix qemu-leon2 qemu-lm32_evr qemu-or1k \
+  uC5282 lm3s6965 realview_pbx_a9_qemu realview_pbx_a9_qemu_smp \
   xilinx_zynq_a9_qemu
 
 OTHER_SCRIPTS=avrtest
@@ -45,6 +45,9 @@ qemu-leon2: gdb-sim-run.in qemu-leon2.in
 
 qemu-lm32_evr: gdb-sim-run.in qemu-lm32_evr.in
 	./mkrun no LM32 lm32 qemu-lm32_evr
+
+qemu-or1k: gdb-sim-run.in qemu-or1k.in
+	./mkrun no OR1K or1k qemu-or1k
 
 uC5282: gdb-sim-run.in uC5282.in
 	./mkrun no M68K-Coldfire m68k uC5282

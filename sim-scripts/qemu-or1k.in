@@ -1,0 +1,41 @@
+#
+#  or1ksim/QEMU BSP Qemu Support
+#
+
+bspUsesGDBSimulator="no"
+# bspGeneratesGDBCommands="yes"
+# bspSupportsGDBServerMode="yes"
+runBSP=NOT_OVERRIDDEN
+if [ ! -r ${runBSP} ] ; then
+  runBSP=qemu-system-or32
+fi
+bspNeedsDos2Unix="yes"
+
+runARGS()
+{
+  if [ ${coverage} = yes ] ; then
+    COVERAGE_ARG="--exec-trace ${1}.cov"
+  fi
+
+  echo "-serial mon:stdio -serial /dev/null -net none -nographic -m 128M -kernel ${1}"
+}
+
+checkBSPFaults()
+{
+  return 0
+}
+
+bspLimit()
+{
+  testname=$1
+  case ${testname} in
+    *stackchk*)limit=5 ;;
+    *fatal*)   limit=1 ;;
+    *minimum*) limit=1 ;;
+    *psxtime*) limit=270 ;;
+    *)         limit=60 ;;
+  esac
+  echo ${limit}
+}
+
+bspGeneratesDeviceTree="no"
