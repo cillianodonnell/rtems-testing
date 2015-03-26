@@ -34,28 +34,13 @@ print_rtems_cpus()
 {
   echo
   echo "CPU is one of the following: "
-  echo "  arm           h8300		i386	lm32		m32c"
-  echo "  m32r 		mips		nios2	powerpc		sh"
-  echo "  sparc		sparc64    	v850"
+  echo "  arm   avr	bfin	h8300	i386	lm32	m32c"
+  echo "  m32r 	m68k	mips	moxie	nios2	or1k	powerpc"
+  echo "  sh	sparc	sparc64	v850"
   echo 
   echo "Formats without a -XXX suffix are the preferred target."
   echo 
-  echo "CPU-rtems is used as the GNU target and results in:"
-  echo "    arm-rtems         -- ARM"
-  echo "    avr-rtems         -- Atmel AVR"
-  echo "    bfin-rtems        -- Blackfin"
-  echo "    h8300-rtems       -- Renesas H8/300"
-  echo "    i386-rtems        -- Intel i386 and above in protected mode (ELF)"
-  echo "    lm32-rtems        -- Lattice Micro (ELF)"
-  echo "    m32c-rtems        -- Renesas M32C (ELF)"
-  echo "    m32R-rtems        -- Renesas M32R (ELF)"
-  echo "    m68k-rtems        -- Motorola mc680x0, mc683xx, and ColdFire (ELF)"
-  echo "    nios2-rtems       -- Altera NIOS2"
-  echo "    powerpc-rtems     -- IBM and Motorola PowerPC"
-  echo "    sh-rtems          -- Renesas SH (COFF)"
-  echo "    sparc-rtems       -- SPARC (ELF)"
-  echo "    sparc64-rtems     -- SPARC64 (ELF)"
-  echo "    v850-rtems        -- Renesas v850 (ELF)"
+  echo "CPU-rtems4.11 is used as the GNU target."
 }
 
 # CPU must be set before we run any of this stuff
@@ -79,6 +64,7 @@ case ${CPU} in
   m32r)        ;;
   m68k)        ;;
   mips)        ;;
+  moxie)       ;;
   nios2)       ;;
   or32)        ;;
   powerpc)     ;;
