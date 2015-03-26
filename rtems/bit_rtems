@@ -377,7 +377,6 @@ fi
 
 build_status=0
 
-export  PATH=$PATH:${INSTALL_POINT}/bin
 if [ ${verbose} = yes ]; then
   echo "Initiating ${MAKE} .."
 fi
@@ -405,14 +404,16 @@ case ${BSP_TO_TEST} in
      echo "Executing ${MAKE} ${MAKE_DEBUG_ARG} ..."
      ${MAKE} -j${njobs} ${MAKE_KEEP_GOING_ARG} ${MAKE_DEBUG_ARG} \
              RTEMS_BSP=
-     check_fatal $? "failed ${MAKE} ${MAKE_DEBUG_ARG}."
+     build_status=$?
+     check_fatal ${build_status} "failed ${MAKE} ${MAKE_DEBUG_ARG}."
      BSP_TO_TEST=
      ;;
   *)
      echo "Executing ${MAKE} ${MAKE_DEBUG_ARG} ..."
      ${MAKE} -j${njobs} ${MAKE_KEEP_GOING_ARG} ${MAKE_DEBUG_ARG} \
              RTEMS_BSP=${BSP_TO_TEST}
-     check_fatal $? "failed ${MAKE} ${MAKE_DEBUG_ARG}."
+     build_status=$?
+     check_fatal ${build_status} "failed ${MAKE} ${MAKE_DEBUG_ARG}."
      ;;
 esac
 
@@ -437,7 +438,6 @@ case $CPU in
      fi
      ;;
 esac
-build_status=$?
 
 case ${target} in
   *4.6*|*4.7*|*4.8*) exeext=exe ;;
@@ -578,10 +578,6 @@ if [ ${ENABLE_RTEMS_TESTS} = "samples" -o \
     # gather results as best we can
     tar cjf ../log/${target}-${BSP_TO_TEST}-logs.tar.bz2 \
         ${target}-${BSP_TO_TEST}/log
- 
-
-    # Should be back at the top of the build tree
-  fi
 fi
 
 pwd
@@ -662,4 +658,14 @@ if [ ${do_install} = yes -a ${doing_bare_bsp} = no ] ; then
     esac
   fi
 fi
+
+# Should be back at the top of the build tree
+if [ ${build_status} -eq 0 -a \
+     ${ENABLE_CLEAN_ON_BUILD_PASSED} = "yes" ] ; then
+  echo "Build OK - Removing ${BUILDDIR}"
+  cd ..
+  rm -rf ${BUILDDIR}
+fi
+fi
+
 exit 0
