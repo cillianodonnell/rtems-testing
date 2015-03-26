@@ -117,7 +117,7 @@ mkdir ticker-executables
 get_bsps()
 {
   if [ -d ${RTEMS}/c/src/lib/libbsp/i386/pc386/make/custom ] ; then
-    ALL_BSPS=`ls -1 ${RTEMS}/c/src/lib/libbsp/${CPU}/*/make/custom/*cfg | \
+    ALL_BSPS=`ls -1 ${RTEMS}/c/src/lib/libbsp/${CPU}/*/make/custom/*.cfg | \
       while read f; do \
         basename $f; done | sed -e 's/.cfg$//' `
       
@@ -236,7 +236,7 @@ if [ ${do_parallel} = yes ] ; then
     echo "  parallel_bsps.tmp is the script being executed"
   fi
   if [ ${testing} = no ] ; then
-    cat parallel_bsps.tmp | parallel --verbose
+    cat parallel_bsps.tmp | parallel ${JOBS} ${PARALLEL_ARGS} --verbose
   fi
     
 fi
