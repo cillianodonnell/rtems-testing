@@ -95,7 +95,7 @@ else
   # leave out nios2 tic4x
   CPUs=
   for c in arm avr bfin h8300 i386 lm32 m32c m32r m68k mips moxie \
-           nios2 powerpc sh sparc sparc64 v850
+           nios2 or1k powerpc sh sparc sparc64 v850
   do
     if [ -r ${RTEMS}/cpukit/score/cpu/${c} ] ; then
       CPUS="${CPUS} ${c}"
@@ -225,7 +225,7 @@ do
     fi
 
     # generate parallel script
-    echo "${CMD} >${logfile} 2>&1" >>parallel_bsps.tmp
+    echo "cd `pwd` ; PATH=${PATH} ${CMD} >${logfile} 2>&1" >>parallel_bsps.tmp
 
   done
 done
