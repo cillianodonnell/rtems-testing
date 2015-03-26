@@ -4,7 +4,8 @@
   # c4x is temporary out.
   #ALL_CPUS="a29k arm c4x h8300 i386 m68k mips mips64orion \
   #      or32 powerpc sh sparc"
-ALL_CPUS="arm avr bfin h8300 i386 m32c m32r m68k mips powerpc sh sparc"
+ALL_CPUS="arm avr bfin h8300 i386 lm32 m32c m32r m68k mips moxie \
+nios2 or1k powerpc sh sparc sparc64 v850"
 
 
 if [ $# -eq 0 ] ; then
