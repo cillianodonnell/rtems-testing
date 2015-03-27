@@ -1,8 +1,9 @@
 #
 #  or1k/or1ksim Support
 #
+bspUsesGDBSimulator="no"
 bspSupportsGDBServerMode="yes"
-runBSP=or32-elf-sim
+runBSP=or1k-elf-sim
 bspTreeFile=sim.cfg
 
 runARGS()

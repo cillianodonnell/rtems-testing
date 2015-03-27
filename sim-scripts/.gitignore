@@ -48,6 +48,7 @@ psim-gdb
 qemu-gumstix
 qemu-leon2
 qemu-lm32_evr
+qemu-or1k
 qemuppc
 realview_pbx_a9_qemu
 realview_pbx_a9_qemu_smp
