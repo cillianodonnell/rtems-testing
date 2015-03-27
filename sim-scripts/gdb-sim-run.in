@@ -206,7 +206,7 @@ fi
 
 test ${verbose} = "yes" && echo Using ${runBSP}
 
-type ${runBSP}
+type ${runBSP} >/dev/null 2>&1
 check_status $? "Path appears to be broken (cannot find ${runBSP})"
 
 killpid()
