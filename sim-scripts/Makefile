@@ -4,7 +4,7 @@ GDBSIM_SCRIPTS=bf537Stamp ezkit533 gdbarmsim h8sim jmr3904 lm32_evr \
 SKYEYE_SCRIPTS=ant5206 bf537Stamp-skyeye csb337 csb350 csb360 edb7312 \
   ezkit533-skyeye gumstix rtl22xx smdk2410 leon2-skyeye
 
-TSIM_SCRIPTS=erc32 leon2 leon3
+TSIM_SCRIPTS=erc32 leon2-tsim leon3-tsim
 QEMU_SCRIPTS=pc386 qemuppc qemu-gumstix qemu-leon2 qemu-lm32_evr qemu-or1k \
   uC5282 lm3s6965 realview_pbx_a9_qemu realview_pbx_a9_qemu_smp \
   xilinx_zynq_a9_qemu
@@ -102,11 +102,11 @@ leon2-skyeye: gdb-sim-run.in gdb-sim.in leon2-skyeye.in
 erc32: gdb-sim-run.in gdb-sim.in erc32.in tsim-support
 	./mkrun yes SPARC sparc erc32
 
-leon2: gdb-sim-run.in gdb-sim.in leon2.in tsim-support
-	./mkrun yes SPARC sparc leon2
+leon2-tsim: gdb-sim-run.in gdb-sim.in leon2-tsim.in tsim-support
+	./mkrun yes SPARC sparc leon2-tsim
 
-leon3: gdb-sim-run.in gdb-sim.in leon3.in tsim-support
-	./mkrun yes SPARC sparc leon3
+leon3-tsim: gdb-sim-run.in gdb-sim.in leon3-tsim.in tsim-support
+	./mkrun yes SPARC sparc leon3-tsim
 
 ### GDB Simulator BSPs
 bf537Stamp bf537Stamp-gdb: gdb-sim-run.in gdb-sim.in bf537Stamp.in
