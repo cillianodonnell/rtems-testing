@@ -1,8 +1,28 @@
 #
-#  SPARC/ERC32 Support (on TSIM)
+#  SPARC/SIS Support for ERC32
 #
 
-tsimName=erc32
-tsimGoAddress=0x2000000
+runARGS()
+{
+  echo "-m 64 ${1}"
+}
 
-##INSERT TSIM SUPPORT HERE
+checkBSPFaults()
+{
+  logfile=$1
+  grep "^Memory exception at " ${logfile}
+  badAccessExit=$?
+  if [ $badAccessExit -eq 0 ] ; then
+    return 1
+  fi
+  return 0
+}
+
+bspLimit()
+{
+  testname=$1
+  case ${testname} in
+    *)         limit=180 ;;
+  esac
+  echo ${limit}
+}

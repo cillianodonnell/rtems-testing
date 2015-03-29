@@ -1,0 +1,55 @@
+#
+#  SPARC/SIS Support for LEON3
+#
+
+## Not really a device tree file but a command file
+bspGeneratesDeviceTree="yes"
+bspTreeFile=leon2_cmds.${LOGNAME}
+
+runBSP=`echo ${defaultRUN} | sed -e 's/run/sis/'`
+
+# Simulator provides 16 MB memory
+runARGS()
+{
+  echo "-leon3 -c ${bspTreeFile} ${1}"
+}
+
+checkBSPFaults()
+{
+  logfile=$1
+  grep "^Memory exception at " ${logfile}
+  badAccessExit=$?
+  if [ $badAccessExit -eq 0 ] ; then
+    return 1
+  fi
+  return 0
+}
+
+bspLimit()
+{
+  testname=$1
+  case ${testname} in
+    *)         limit=180 ;;
+  esac
+  echo ${limit}
+}
+
+### Generate the SIS command file
+bspGenerateDeviceTree()
+{
+cat <<EOF >${bspTreeFile}
+run
+quit
+EOF
+}
+
+## We have to pass in an argument to gdb to select the CPU
+bspGeneratesGDBCommands="yes"
+
+bspGenerateGDBCommands()
+{
+cat <<EOF
+tar sim -leon3
+load
+EOF
+}

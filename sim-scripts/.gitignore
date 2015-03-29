@@ -31,8 +31,12 @@ leon2
 leon2-gdb
 leon2-skyeye
 leon2-skyeye-gdb
+leon2-tsim
+leon2-tsim-gdb
 leon3
 leon3-gdb
+leon3-tsim
+leon3-tsim-gdb
 lm32_evr
 lm32_evr-gdb
 lm3s6965
