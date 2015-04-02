@@ -117,7 +117,7 @@ section sim
 end
 
 section VAPI
-  enabled = 1
+  enabled = 0 
   server_port = 50000
   log_enabled = 1
   vapi_log_file = "vapi.log"
@@ -134,8 +134,8 @@ section cpu
 end
 
 section debug
- enabled = 1
- rsp_enabled = 1
+ enabled = 0
+ rsp_enabled = 0 
  rsp_port = 50001
 end
 
