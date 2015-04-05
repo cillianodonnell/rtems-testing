@@ -2,6 +2,21 @@
 #  lm32/lm32_evr Support Using Simulator in GDB
 #
 
+generate_lm32_evr_conf()
+{
+cat >lm32_evr.conf <<EOF
+/lm32cpu
+/lm32uart/reg 0x80006000 0x100
+/lm32uart > int int0 /lm32cpu
+/lm32timer/reg 0x80002000 0x80
+/lm32timer > int int1 /lm32cpu
+EOF
+
+# GDB does not support attaching a second instance
+# /lm32timer/reg 0x8000a000 0x80
+# /lm32timer > int int3 /lm32cpu
+}
+
 runARGS()
 {
 #  echo '--hw-device lm32cpu
@@ -10,28 +25,23 @@ runARGS()
 #       --hw-device "lm32timer/reg 0x80002000 0x80"
 #       --hw-device "/lm32timer > int int1 /lm32cpu"
 #       --memory-region 0x08000000,0x4000000' ${1}
-cat >lm32_evr.conf <<EOF
-lm32cpu
-lm32uart/reg 0x80006000 0x100
-/lm32uart > int int0 /lm32cpu
-lm32timer/reg 0x80002000 0x80
-/lm32timer > int int1 /lm32cpu
---memory-region  0x08000000,0x4000000
-EOF
-  echo "--hw-file lm32_evr.conf ${1}"
+  generate_lm32_evr_conf
+  echo "--hw-file lm32_evr.conf --memory-region  0x08000000,0x4000000 ${1}"
 }
 
 bspGeneratesGDBCommands="yes"
 
 bspGenerateGDBCommands()
 {
+# tar sim --hw-device lm32cpu \\
+#   --hw-device "lm32uart/reg 0x80006000 0x100" \\
+#   --hw-device "/lm32uart > int int0 /lm32cpu" \\
+#   --hw-device "lm32timer/reg 0x80002000 0x80" \\
+#   --hw-device "/lm32timer > int int1 /lm32cpu" \\
+#   --memory-region 0x08000000,0x4000000
+generate_lm32_evr_conf
 cat <<EOF
-tar sim --hw-device lm32cpu \\
-  --hw-device "lm32uart/reg 0x80006000 0x100" \\
-  --hw-device "/lm32uart > int int0 /lm32cpu" \\
-  --hw-device "lm32timer/reg 0x80002000 0x80" \\
-  --hw-device "/lm32timer > int int1 /lm32cpu" \\
-  --memory-region 0x08000000,0x4000000
+tar sim --hw-file lm32_evr.conf --memory-region  0x08000000,0x4000000
 load
 EOF
 }

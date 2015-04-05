@@ -99,8 +99,8 @@ leon2-skyeye: gdb-sim-run.in gdb-sim.in leon2-skyeye.in
 	./mkrun yes SPARC sparc leon2-skyeye
 
 ### TSIM Simulator BSPs
-erc32: gdb-sim-run.in gdb-sim.in erc32.in tsim-support
-	./mkrun yes SPARC sparc erc32
+erc32-tsim: gdb-sim-run.in gdb-sim.in erc32-tsim.in tsim-support
+	./mkrun yes SPARC sparc erc32-tsim
 
 leon2-tsim: gdb-sim-run.in gdb-sim.in leon2-tsim.in tsim-support
 	./mkrun yes SPARC sparc leon2-tsim
