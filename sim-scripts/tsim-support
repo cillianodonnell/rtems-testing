@@ -51,13 +51,15 @@ bspLimit()
   testname=$1
   case ${testname} in
     *stackchk*)limit=15 ;;
+    *stackchk*)limit=20 ;;
     *fatal*)   limit=1 ;;
     *minimum*) limit=1 ;;
     *block05*) limit=70 ;;
+    *crypt*)   limit=200 ;;
     *psxtime*) 
        case ${tsimName} in
-         leon)  limit=240 ;;  # ran in 200 seconds on idle england
-         leon3) limit=240 ;;  # ran in 200 seconds on idle england
+         leon)  limit=240 ;;
+         leon3) limit=240 ;;
          *)     limit=180 ;;
        esac
        ;;
