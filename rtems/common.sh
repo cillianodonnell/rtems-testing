@@ -66,6 +66,7 @@ case ${CPU} in
   mips)        ;;
   moxie)       ;;
   nios2)       ;;
+  or1k)        ;;
   or32)        ;;
   powerpc)     ;;
   sh)          ;;
