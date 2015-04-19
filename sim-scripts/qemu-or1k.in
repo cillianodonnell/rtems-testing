@@ -1,5 +1,5 @@
 #
-#  or1ksim/QEMU BSP Qemu Support
+#  generic_or1k BSP QEMU Support
 #
 
 bspUsesGDBSimulator="no"
@@ -17,7 +17,7 @@ runARGS()
     COVERAGE_ARG="--exec-trace ${1}.cov"
   fi
 
-  echo "-serial mon:stdio -serial /dev/null -net none -nographic -m 128M -kernel ${1}"
+  echo "-serial mon:stdio -serial /dev/null -net none -nographic -m 32M -kernel ${1}"
 }
 
 checkBSPFaults()
