@@ -270,6 +270,7 @@ BASE=`pwd`
 
 ### Tag the source
 git tag ${VERSION}
+check_error $? "Unable to git tag"
 
 ### Now generate the RTEMS tarball generation
 vecho "Generating the RTEMS tarball"
