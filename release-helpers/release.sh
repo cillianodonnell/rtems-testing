@@ -77,6 +77,12 @@ vecho()
   fi
 }
 
+check_dep()
+{
+  type $1 > /dev/null 2>&1
+  check_error $? "$1 is not in your PATH"
+}
+
 #  Set up variables which control the scripts behavior
 verbose=yes
 VERSION=NOT_SET
@@ -99,14 +105,9 @@ done
 test -r aclocal/version.m4
 check_error $? "Not at the top of an RTEMS tree"
 
-type sb-bootstrap >/dev/null 2>&1
-check_error $? "sb-bootstrap is not in your PATH"
-
-type doxygen > /dev/null 2>&1
-check_error $? "doxygen is not in your PATH"
-
-type mscgen > /dev/null 2>&1
-check_error $? "mscgen is not in your PATH"
+check_dep sb-bootstrap
+check_dep doxygen
+check_dep mscgen
 
 if [ ${bump_dot_release} = "no" -a ${bump_major_version} = "no" ] ; then
   fatal "Must select an action: bump major or dot release"
@@ -168,10 +169,8 @@ if [ ${bump_dot_release} = "yes" ] ; then
 
   # We need to have access to various texi tools to build documentation
   # For CentOS, the RPMs are texinfo-tex and texi2html
-  type texi2dvi >/dev/null 2>&1
-  check_error $? "texi2dvi is not in your PATH"
-  type texi2pdf >/dev/null 2>&1
-  check_error $? "texi2pdf is not in your PATH"
+  check_dep texi2dvi
+  check_dep texi2pdf
   # main tool varies based on texinfo version
   type texi2any >/dev/null 2>&1
   ta=$?
@@ -181,8 +180,7 @@ if [ ${bump_dot_release} = "yes" ] ; then
   fi
 
   # We need to have access to SPARC tools to build Doxygen.
-  type sparc-rtems${MAJOR}-gcc >/dev/null 2>&1
-  check_error $? "sparc-rtems${MAJOR}-gcc is not in your PATH"
+  check_dep sparc-rtems${MAJOR}-gcc
 fi
 
 ##### END OF ERROR CHECKING
