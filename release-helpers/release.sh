@@ -186,24 +186,41 @@ fi
 
 ##### END OF ERROR CHECKING
 
-ACLOCAL_VERSION_M4=" \
-testsuites/aclocal/version.m4 \
-aclocal/version.m4 \
-cpukit/aclocal/version.m4 \
-c/src/aclocal/version.m4"
+# Determine the repository. This is used to trip special actions
+repo=`git rev-parse --show-toplevel`
+repo=`basename ${repo}`
 
+# For the RTEMS repository, update the aclocal.m4 and VERSION file
 update_aclocal_version_for_version()
 {
+  ACLOCAL_VERSION_M4=" testsuites/aclocal/version.m4 \
+    aclocal/version.m4 cpukit/aclocal/version.m4 c/src/aclocal/version.m4"
+
   RV=${VERSION}
-  for f in ${ACLOCAL_VERSION_M4}
-  do
-    sed -i -e "s|\[_RTEMS_VERSION\],\[.*\]|\[_RTEMS_VERSION\],\[${RV}\]|" ${f}
-  done
-  sed -i -e "s,\(^RTEMS Version\).*,\1 ${RV}," VERSION
-  git add ${ACLOCAL_VERSION_M4} VERSION
-  git commit -m "all version.m4, VERSION: Update to ${RV}"
+  case ${repo} in
+    rtems)
+      for f in ${ACLOCAL_VERSION_M4}
+      do
+        sed -i \
+          -e "s|\[_RTEMS_VERSION\],\[.*\]|\[_RTEMS_VERSION\],\[${RV}\]|" ${f}
+      done
+      sed -i -e "s,\(^RTEMS Version\).*,\1 ${RV}," VERSION
+      git add ${ACLOCAL_VERSION_M4} VERSION
+      git commit -m "all version.m4, VERSION: Update to ${RV}"
+      ;;
+    rtems-source-builder)
+      # XXX update version.py
+      check_error 1 "Need to update version.py"
+      ;;
+    *)
+      sed -i -e "s,\(^RTEMS Version\).*,\1 ${RV}," VERSION
+      git add VERSION
+      git commit -m "VERSION: Update to ${RV}"
+      ;;
+  esac
 }
 
+# For the RTEMS repository, update the documentation versioning information
 update_doc_versions()
 {
   date1=`date "+%d %B %Y"`
@@ -220,6 +237,7 @@ update_doc_versions()
   git commit -m "doc/*/version.texi: Update to ${RV} and current date"
 }
 
+# So far, this only occurs with the RTEMS repository
 build_doxygen()
 {
   set -x
@@ -252,13 +270,15 @@ build_doxygen()
   mv ${outdir}-tmp ${outdir}
 }
 
-# Step 1: Update the various version files
+### Update the various version files
 vecho "Updating aclocal version.m4 and VERSION files"
 update_aclocal_version_for_version
 
-# Step 2: Update the documentation
-vecho "Updating version and dates in documentation"
-update_doc_versions
+### Update the documentation
+if [ ${repo} = "rtems" ] ; then
+  vecho "Updating version and dates in documentation"
+  update_doc_versions
+fi
 
 # No further actions needed if bumping major version
 if [ ${bump_major_version} = "yes" ] ; then
@@ -270,71 +290,86 @@ fi
 ### Set a BASE directory variable
 BASE=`pwd`
 
+### Check that the tag does not exist
+git tag | grep ${VERSION} >/dev/null
+if [ $? -eq 0 ] ; then
+  check_error 1 "git tag of ${VERSION} already exists"
+fi
+
 ### Tag the source
 git tag ${VERSION}
 check_error $? "Unable to git tag"
 
-### Now generate the RTEMS tarball generation
-vecho "Generating the RTEMS tarball"
-rm -rf rtems-${VERSION} \
-       rtems-${VERSION}-not_bootstrapped.tar \
-       rtems-${VERSION}.tar.bz2
-git archive --format=tar --prefix=rtems-${VERSION}/ ${VERSION} \
-   >rtems-${VERSION}-not_bootstrapped.tar
-check_error $? "Unable to perform git archive"
+### Now generate the tarball
+if [ ${repo} = "rtems" ] ; then
+  vecho "Generating the RTEMS tarball"
+  rm -rf rtems-${VERSION} \
+         rtems-${VERSION}-not_bootstrapped.tar \
+         rtems-${VERSION}.tar.bz2
+  git archive --format=tar --prefix=rtems-${VERSION}/ ${VERSION} \
+     >rtems-${VERSION}-not_bootstrapped.tar
+  check_error $? "Unable to perform git archive"
 
-tar xf rtems-${VERSION}-not_bootstrapped.tar
-cd rtems-${VERSION}/
-check_error $? "Unable to cd to untarred RTEMS source"
+  tar xf rtems-${VERSION}-not_bootstrapped.tar
+  cd rtems-${VERSION}/
+  check_error $? "Unable to cd to untarred RTEMS source"
 
-# bootstrap and then remove unnecessary files
-sb-bootstrap >/dev/null 2>&1
-check_error $? "Unable to bootstrap the RTEMS source code"
+  # bootstrap and then remove unnecessary files
+  sb-bootstrap >/dev/null 2>&1
+  check_error $? "Unable to bootstrap the RTEMS source code"
 
-find .  -name "stamp.*" \
-     -o -name "autom4te.cache" \
-     -o -name "rsb-log-*.txt" \
-     | xargs -e rm -rf
-cd ..
-tar cjf rtems-${VERSION}.tar.bz2 rtems-${VERSION}
-check_error $? "Unable to create bootstrapped tar.bz2 for release"
+  find .  -name "stamp.*" \
+       -o -name "autom4te.cache" \
+       -o -name "rsb-log-*.txt" \
+       | xargs -e rm -rf
+  cd ..
+  tar cjf rtems-${VERSION}.tar.bz2 rtems-${VERSION}
+  check_error $? "Unable to create bootstrapped tar.bz2 for release"
 
-rm -f rtems-${VERSION}-not_bootstrapped.tar
+  rm -f rtems-${VERSION}-not_bootstrapped.tar
 
-### Now generate the documentation
-vecho "Generating the RTEMS documentation tarball"
-rm -rf b-doc rtemsdocs-${VERSION} rtemsdocs-${VERSION}.tar.bz2
-mkdir b-doc
-cd b-doc
-../rtems-${VERSION}/doc/configure --enable-maintainer-mode \
-  --prefix=/opt/rtems-${VERSION} >c.log 2>&1
-check_error $? "Unable to configure RTEMS documentation"
+else
+  vecho "Generating the ${repo} tarball"
+  git archive --format=tar --prefix=${repo}-${VERSION}/ ${VERSION} \
+     | bzip2 -9 >${repo}-${VERSION}.tar.bz2
+  check_error $? "Unable to perform git archive on ${repo}"
+fi
 
-make >b.log 2>&1
-check_error $? "Unable to build RTEMS documentation"
+### RTEMS has special actions after generating the tarball
+if [ ${repo} = "rtems" ] ; then
+  ### Now generate the documentation
+  vecho "Generating the RTEMS documentation tarball"
+  rm -rf b-doc rtemsdocs-${VERSION} rtemsdocs-${VERSION}.tar.bz2
+  mkdir b-doc
+  cd b-doc
+  ../rtems-${VERSION}/doc/configure --enable-maintainer-mode \
+    --prefix=/opt/rtems-${VERSION} >c.log 2>&1
+  check_error $? "Unable to configure RTEMS documentation"
 
-make prefix=${BASE}/rtemsdocs-${VERSION} install >i.log 2>&1
-check_error $? "Unable to install RTEMS documentation"
+  make >b.log 2>&1
+  check_error $? "Unable to build RTEMS documentation"
 
-cd ..
-test -d rtemsdocs-${VERSION}
-check_error $? "Documentation was not installed into temporary location"
+  make prefix=${BASE}/rtemsdocs-${VERSION} install >i.log 2>&1
+  check_error $? "Unable to install RTEMS documentation"
 
-tar cjf rtemsdocs-${VERSION}.tar.bz2 rtemsdocs-${VERSION}
-check_error $? "Unable to create RTEMS Documentation tar.bz2 for release"
+  cd ..
+  test -d rtemsdocs-${VERSION}
+  check_error $? "Documentation was not installed into temporary location"
 
-rm -rf b-docs
+  tar cjf rtemsdocs-${VERSION}.tar.bz2 rtemsdocs-${VERSION}
+  check_error $? "Unable to create RTEMS Documentation tar.bz2 for release"
 
-### Now generate Doxygen
-doxyDir=rtems-doxygen-${VERSION}
-doxyOut=${BASE}/${doxyDir}
-rm -rf ${doxyOut}
-build_doxygen ${doxyOut}
+  rm -rf b-docs
 
-cd ${BASE}
-tar cjf ${doxyDir}.tar.bz2 ${doxyDir}
-check_error $? "Unable to create RTEMS Doxygen tar.bz2 for release"
+  ### Now generate Doxygen
+  doxyDir=rtems-doxygen-${VERSION}
+  doxyOut=${BASE}/${doxyDir}
+  rm -rf ${doxyOut}
+  build_doxygen ${doxyOut}
 
-
+  cd ${BASE}
+  tar cjf ${doxyDir}.tar.bz2 ${doxyDir}
+  check_error $? "Unable to create RTEMS Doxygen tar.bz2 for release"
+fi
 
 exit 0
