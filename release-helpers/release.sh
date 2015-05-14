@@ -105,6 +105,9 @@ check_error $? "sb-bootstrap is not in your PATH"
 type doxygen > /dev/null 2>&1
 check_error $? "doxygen is not in your PATH"
 
+type mscgen > /dev/null 2>&1
+check_error $? "mscgen is not in your PATH"
+
 if [ ${bump_dot_release} = "no" -a ${bump_major_version} = "no" ] ; then
   fatal "Must select an action: bump major or dot release"
 fi
