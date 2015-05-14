@@ -58,7 +58,30 @@ Major:   Example 4.11, 4.12
 Version: 4.11.0, 4.11.1, 4.11.99.0
 
 An action of making a dot release or bumping the major must be specified.
+
 EOF
+
+if [ ${repo} != "NOT_SET" ] ; then
+  echo "An error has occurred and clean up may be needed. The following should"
+  echo "help identify what may need to be done for cleanup."
+
+  if [ ${bump_dot_release} = "yes" ] ; then
+    echo "  git checkout master"
+    echo "  git branch -D ${MAJOR}"
+    echo "  git tag -d ${VERSION}"
+    echo "  rm -rf rtems-${VERSION}.tar.bz2 rtems-${VERSION}"
+    case ${repo} in
+      rtems)
+        echo "  rm -rf b-doc b-doxy"
+        echo "  rtems-doxygen-${VERSION}.tar.bz2 rtems-doxygen-${VERSION}"
+        echo "  rtemsdocs-${VERSION}.tar.bz2 rtemsdocs-${VERSION}"
+        ;;
+    esac
+  else
+    echo "  git checkout master"
+    echo "  git branch -D @WORKING@"
+  fi 
+fi
 }
 
 toggle()
@@ -85,6 +108,7 @@ check_dep()
 
 #  Set up variables which control the scripts behavior
 verbose=yes
+repo=NOT_SET
 VERSION=NOT_SET
 MAJOR=NOT_SET
 bump_dot_release=no
