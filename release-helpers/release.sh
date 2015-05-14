@@ -102,7 +102,7 @@ check_error $? "Not at the top of an RTEMS tree"
 type sb-bootstrap >/dev/null 2>&1
 check_error $? "sb-bootstrap is not in your PATH"
 
-type doxygen > /deve/null 2>&1
+type doxygen > /dev/null 2>&1
 check_error $? "doxygen is not in your PATH"
 
 if [ ${bump_dot_release} = "no" -a ${bump_major_version} = "no" ] ; then
