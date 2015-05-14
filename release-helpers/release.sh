@@ -108,6 +108,7 @@ check_error $? "Not at the top of an RTEMS tree"
 check_dep sb-bootstrap
 check_dep doxygen
 check_dep mscgen
+check_dep dot  # install graphviz
 
 if [ ${bump_dot_release} = "no" -a ${bump_major_version} = "no" ] ; then
   fatal "Must select an action: bump major or dot release"
