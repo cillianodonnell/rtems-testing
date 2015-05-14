@@ -141,7 +141,7 @@ test -d .git
 check_error $? "You are not in a git checkout"
 
 # Do NOT do this on the master
-branch=`git status | grep "On branch " | sed -e 's/^# On branch //'`
+branch=`git branch | grep "*" | awk '{ print $2 }'`
 if [ ${branch} = "master" ] ; then
   fatal "You should be on a git branch before running this script"
 fi
