@@ -64,10 +64,11 @@ EOF
 if [ ${repo} != "NOT_SET" ] ; then
   echo "An error has occurred and clean up may be needed. The following should"
   echo "help identify what may need to be done for cleanup."
+  echo
+  echo "  git checkout master"
+  echo "  git branch -D @WORKING@"
 
   if [ ${bump_dot_release} = "yes" ] ; then
-    echo "  git checkout master"
-    echo "  git branch -D ${MAJOR}"
     echo "  git tag -d ${VERSION}"
     echo "  rm -rf rtems-${VERSION}.tar.bz2 rtems-${VERSION}"
     case ${repo} in
@@ -77,9 +78,6 @@ if [ ${repo} != "NOT_SET" ] ; then
         echo "  rtemsdocs-${VERSION}.tar.bz2 rtemsdocs-${VERSION}"
         ;;
     esac
-  else
-    echo "  git checkout master"
-    echo "  git branch -D @WORKING@"
   fi 
 fi
 }
