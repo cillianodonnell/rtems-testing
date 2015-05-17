@@ -1,25 +1,32 @@
 #! /bin/sh
 #
 # This script is used to do the mechanics of making an RTEMS release
-# from git and associated artifacts:
-#  + bootstrapped RTEMS tarball
-#  + tarball of user documentation
-#  + tarball of generated Doxygen documentation
-#  + (TODO) ChangeLog
+# from the individual git repositories.  It is assumed that the user:
 #
-# It is assumed that the user:
 #  (a) does all work on a git branch
 #  (b) created that branch by hand
 #  (c) will push the branch by hand if all went OK
 #  (d) publish the artifacts to the ftp site
 #
+# After the user is on the manually created branch, the script performs
+# the following actions:
+#
+#  + updates VERSION file
+#  + (RTEMS only) updates version.m4 files
+#  + commits version information updates
+#  + generates compressed tar file of source
+#
+# For the primary RTEMS repository, it then produces the following
+# associated artifacts:
+#  + remakes the RTEMS tarball after bootstrapping
+#  + produces a tarball of user documentation
+#  + produces a tarball of generated Doxygen documentation
+#  + (TODO) produces a ChangeLog
+#
 # The script tries to do as much error checking as possible before
 # any commits or tags are added to the repository.
 #
 # TODO:
-#   + Can this be used on all repositories? If so, then it needs to guess or
-#     be told the repository.
-#   + Any other error checking?
 #   + Test host environment for more missing programs
 #     - Can't build tests without pax installed
 #   + Review against cut_release (old, cvs, etc.) and remove cut_release
@@ -78,7 +85,7 @@ if [ ${repo} != "NOT_SET" ] ; then
         echo "  rtemsdocs-${VERSION}.tar.bz2 rtemsdocs-${VERSION}"
         ;;
     esac
-  fi 
+  fi
 fi
 }
 
@@ -124,8 +131,19 @@ do
   esac
 done
 
-test -r aclocal/version.m4
-check_error $? "Not at the top of an RTEMS tree"
+# Must be in a git repository
+test -d .git
+check_error $? "You are not in a git checkout"
+
+# Do NOT do this on the master
+branch=`git branch | grep "*" | awk '{ print $2 }'`
+if [ ${branch} = "master" ] ; then
+  fatal "You should be on a git branch before running this script"
+fi
+
+# Determine the repository. This is used to trip special actions
+repo=`git rev-parse --show-toplevel`
+repo=`basename ${repo}`
 
 check_dep sb-bootstrap
 check_dep doxygen
@@ -137,15 +155,15 @@ if [ ${bump_dot_release} = "no" -a ${bump_major_version} = "no" ] ; then
 fi
 
 if [  ${VERSION} = "NOT_SET" -a ${MAJOR} = "NOT_SET" ] ; then
-  fatal "RTEMS Version and Major value not provided" 
+  fatal "RTEMS Version and Major value not provided"
 fi
 
 if [ ${VERSION} != "NOT_SET" -a ${MAJOR} = "NOT_SET" ] ; then
-  fatal "RTEMS Version provided without providing Major value" 
+  fatal "RTEMS Version provided without providing Major value"
 fi
 
 if [ ${VERSION} = "NOT_SET" -a ${MAJOR} != "NOT_SET" ] ; then
-  fatal "Major version provided without providing RTEMS Version value" 
+  fatal "Major version provided without providing RTEMS Version value"
 fi
 
 # Crude checks on the VERSION number
@@ -166,16 +184,6 @@ if [ ${MAJOR} != "NOT_SET" ] ; then
   esac
 fi
 
-# Must be in a git repository
-test -d .git
-check_error $? "You are not in a git checkout"
-
-# Do NOT do this on the master
-branch=`git branch | grep "*" | awk '{ print $2 }'`
-if [ ${branch} = "master" ] ; then
-  fatal "You should be on a git branch before running this script"
-fi
-
 # If making a dot release, then there are extra requirements.
 if [ ${bump_dot_release} = "yes" ] ; then
   # We want to be on the release branch
@@ -190,27 +198,40 @@ if [ ${bump_dot_release} = "yes" ] ; then
     *) fatal "${VERSION} does not start with ${MAJOR}" ;;
   esac
 
-  # We need to have access to various texi tools to build documentation
-  # For CentOS, the RPMs are texinfo-tex and texi2html
-  check_dep texi2dvi
-  check_dep texi2pdf
-  # main tool varies based on texinfo version
-  type texi2any >/dev/null 2>&1
-  ta=$?
-  type texi2html >/dev/null 2>&1
-  if [ $? -ne 0 -a ${ta} -ne 0 ] ; then
-    fatal "Neither texi2any nor tex2html is available"
-  fi
+  case ${repo} in
+    rtems)
+      # We need to have access to various texi tools to build documentation
+      # For CentOS, the RPMs are texinfo-tex and texi2html
+      check_dep texi2dvi
+      check_dep texi2pdf
+      # main tool varies based on texinfo version
+      type texi2any >/dev/null 2>&1
+      ta=$?
+      type texi2html >/dev/null 2>&1
+      if [ $? -ne 0 -a ${ta} -ne 0 ] ; then
+        fatal "Neither texi2any nor tex2html is available"
+      fi
 
-  # We need to have access to SPARC tools to build Doxygen.
-  check_dep sparc-rtems${MAJOR}-gcc
+      # We need to have access to SPARC tools to build Doxygen.
+      check_dep sparc-rtems${MAJOR}-gcc
+      ;;
+    *)
+      # No special dependencies for this repository
+      ;;
+   esac
 fi
 
-##### END OF ERROR CHECKING
+### Check for supporting files in top directory
+test -r VERSION
+check_error $? "VERSION file is not present"
 
-# Determine the repository. This is used to trip special actions
-repo=`git rev-parse --show-toplevel`
-repo=`basename ${repo}`
+test -r SUPPORT
+check_error $? "File SUPPORT is not present"
+
+grep "^.*Version " VERSION >/dev/null 2>&1
+check_error $? "VERSION file does not include proper Version string"
+
+##### END OF ERROR CHECKING
 
 # For the RTEMS repository, update the aclocal.m4 and VERSION file
 update_aclocal_version_for_version()
@@ -235,7 +256,7 @@ update_aclocal_version_for_version()
       check_error 1 "Need to update version.py"
       ;;
     *)
-      sed -i -e "s,\(^RTEMS Version\).*,\1 ${RV}," VERSION
+      sed -i -e "s,\(^.*Version\).*,\1 ${RV}," VERSION
       git add VERSION
       git commit -m "VERSION: Update to ${RV}"
       ;;
@@ -249,9 +270,9 @@ update_doc_versions()
   date2=`date "+%B %Y"`
   find -name version.texi | while read f
   do
-    (echo "@set UPDATED ${date1}" ; 
-     echo "@set UPDATED-MONTH ${date2}" ; 
-     echo "@set EDITION ${MAJOR}" ; 
+    (echo "@set UPDATED ${date1}" ;
+     echo "@set UPDATED-MONTH ${date2}" ;
+     echo "@set EDITION ${MAJOR}" ;
      echo "@set VERSION ${VERSION}" ) \
     >${f}
   done
@@ -266,7 +287,7 @@ build_doxygen()
   cpu=sparc
   bsp=leon3
   outdir=${1}
-  
+
   rm -rf b-doxy
   mkdir b-doxy
   cd b-doxy
@@ -282,7 +303,7 @@ build_doxygen()
       -e "s,^STRIP_FROM_PATH.*=.*$,STRIP_FROM_PATH = ," \
       -e "s,^INPUT.*=.*lib.*$,INPUT = ," \
     <Doxyfile >../../../${bsp}/lib/include/Doxyfile
-  
+
   cd ../../../${bsp}/lib/include
 
   doxygen >doxy.log 2>&1
