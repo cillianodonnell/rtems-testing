@@ -84,8 +84,14 @@ runARGS()
   else
     CPUARGS="-cpu core2duo -smp ${number_of_cores}"
   fi
+  #
+  # This works with older Qemu's but results in noise in 2.3.50
+  #     -fda ${fd0Image} -hda fat:${hd0Dir}
+  # So it was changed to the -drive argument scheme
   echo "-m 512 -boot a ${CPUARGS} \
-       -fda ${fd0Image} -hda fat:${hd0Dir} ${COVERAGE_ARG} \
+       -drive file=${fd0Image},index=0,if=floppy,format=raw \
+       -drive file=fat:${hd0Dir},format=raw \
+       ${COVERAGE_ARG} \
        -monitor null ${GRAPHIC_ARG} -serial ${SERIAL_ARG} --no-reboot"
 }
 
