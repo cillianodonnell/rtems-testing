@@ -521,6 +521,8 @@ j_gcc()
     --disable-werror \
     --enable-threads=rtems  --with-gnu-as ${multilib} \
     --disable-libstdcxx-pch \
+    --disable-lto \
+    --disable-plugin \
     --enable-newlib-mb --enable-newlib-iconv \
     --with-gnu-ld --with-newlib  --verbose --with-system-zlib --disable-nls \
     --enable-version-specific-runtime-libs \
