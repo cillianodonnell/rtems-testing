@@ -33,6 +33,7 @@ case $1 in
     BSP=realview_pbx_a9_qemu
     DEJABSP=realview_pbx_a9_qemu
     BSP_SIM=realview_pbx_a9_qemu
+    TARGET_BOARD_OPTS="{-march=armv7-a/-mthumb/-mfpu=neon/-mfloat-abi=hard}"
     ;;
   lm32_evr) 
     CPU=lm32
@@ -180,7 +181,7 @@ case ${testsuite} in
     SIM=${BSP_SIM} \
     RTEMS_MAKEFILE_PATH=${rtemsdir} \
     RTEMS_CONFIG_OBJ=${rtems_config} \
-    --target_board=rtems-${CPU}-${DEJABSP} \
+    --target_board=rtems-${CPU}-${DEJABSP}${TARGET_BOARD_OPTS} \
     "
     ;;
 esac
