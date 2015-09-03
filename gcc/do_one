@@ -520,6 +520,7 @@ j_gcc()
     ${GCC_EXTRA_ARGS} \
     --disable-werror \
     --enable-threads=rtems  --with-gnu-as ${multilib} \
+    --disable-libstdcxx-pch \
     --enable-newlib-mb --enable-newlib-iconv \
     --with-gnu-ld --with-newlib  --verbose --with-system-zlib --disable-nls \
     --enable-version-specific-runtime-libs \
