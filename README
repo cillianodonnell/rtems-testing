@@ -7,8 +7,8 @@ as at OAR.
 
 Source Code and Patches
 =======================
-You are responsible for setting up the source. And it should look
-something like this:
+You are responsible for downloading all the tools and setting up the 
+source. And it should look something like this:
 
 TESTROOT
   - gcc SOURCE directory
@@ -35,6 +35,22 @@ copy the RPM contents to the working install point.
 
 do_one in this directory has a LOT of options to control what to do.
 
+You will need a toolchain to bootstrap and build RTEMS. This toolchain can be
+in turn build using rtems-source-builder.
+Once you've built the toolchain, add its 'bin' directory to $PATH, as follows:
+export PATH=/path/to/toolchain/bin:${PATH}
+Make sure you run the bootstrap script on the RTEMS source directory before
+running do_one -r.
+
+do_one -r will build RTEMS and its sample programs.
+You can use the samples to make sure the test runner works for your board.
+I.e you can run:
+~/rtems-testing/sim-scripts/realview_pbx_a9_qemu -i ticker.exe
+and see if the results make sense. You may notice the ticker sample will run
+faster than "real time" because it's a simulation, and fast idle is enabled
+by default.
+
+
 How to Setup a Source Tree For Testing
 ======================================
 # Make sure test bin directories are in your PATH
@@ -45,7 +61,6 @@ export PATH=${HOME}/test-gcc/rtems-testing/bin:${PATH}
 
 mkdir ~/test-gcc
 cd ~/test-gcc
-cvs -z 9 -d :pserver:anoncvs:anoncvs@sourceware.org:/cvs/src login
 
 # test script infrastructure
 git clone git://git.rtems.org/rtems-testing.git
@@ -55,42 +70,31 @@ make -C rtems-testing/sim-scripts
 git clone git://git.rtems.org/rtems.git
 
 # binutils
-mkdir binutils-cvs
-cd binutils-cvs
-READ ONLY: cvs -z 9 -d :pserver:anoncvs:anoncvs@sourceware.org:/cvs/src co binutils
-WRITE: CVS_RSH=ssh cvs -d :ext:joel@sourceware.org:/cvs/src co -P binutils
-cd ..
+git clone git://sourceware.org/git/binutils.git
 
 # newlib
-mkdir newlib-cvs
-cd newlib-cvs
-READ ONLY: cvs -z 9 -d :pserver:anoncvs:anoncvs@sourceware.org:/cvs/src co newlib
-WRITE: CVS_RSH=ssh cvs -d :ext:joel@sourceware.org:/cvs/src co -P newlib
-cd ..
+git clone git://sourceware.org/git/newlib-cygwin.git
 
 # gdb
-mkdir gdb-cvs
-cd gdb-cvs
-READ ONLY: cvs -z 9 -d :pserver:anoncvs:anoncvs@sourceware.org:/cvs/src co gdb
-WRITE: CVS_RSH=ssh cvs -d :ext:joel@sourceware.org:/cvs/src co -P gdb
-cd ..
+wget ftp://ftp.gnu.org/gnu/gdb/gdb-7.10.tar.xz
+tar -xvf gdb-7.10.tar.xz
+rm gdb-7.10.tar.xz
 
 # gcc
-READ ONLY: svn checkout svn://gcc.gnu.org/svn/gcc/trunk gcc-svn
-WRITE      svn co svn+ssh://joel@gcc.gnu.org/svn/gcc/trunk gcc-svn
+git clone git://gcc.gnu.org/git/gcc.git gcc-git
 
 # symlink newlib into gcc-svn
 cd gcc-svn
-ln -s ~/test-gcc/newlib-cvs/src/newlib .
-ln -s ~/test-gcc/newlib-cvs/src/libgloss .
+ln -s ~/test-gcc/newlib-cygwin/src/newlib .
+ln -s ~/test-gcc/newlib-cygwin/src/libgloss .
 cd ..
 
 # obtain automake and autoconf from ftp.gnu.org as tarballs
 # NOTE: Check versions required for RTEMS CVS.
-wget ftp://ftp.gnu.org/pub/gnu/autoconf/autoconf-2.69.tar.bz2
-tar xjf autoconf-2.69.tar.bz2
-wget ftp://ftp.gnu.org/pub/gnu/automake/automake-1.12.6.tar.bz2
-tar xjf automake-1.12.6.tar.bz2
+wget http://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.xz
+tar -xvf autoconf-2.69.tar.xz
+wget http://ftp.gnu.org/gnu/automake/automake-1.15.tar.xz
+tar -xvf automake-1.15.tar.xz
 
 # make install points
 mkdir install
