@@ -592,7 +592,7 @@ j_rtems()
       RTEMS_ARGS="--enable-ada --enable-posix --enable-networking" ;;
   esac
   ${RTEMSDIR}/configure --target=${TARGET} ${ENABLE_BSP} \
-  ${RTEMS_ARGS} --enable-maintainer-mode --disable-tests \
+  ${RTEMS_ARGS} --enable-maintainer-mode --enable-tests=samples \
   --prefix=${BSP_INSTALL} && make ${MAKEJOBS} ${MAKE_ARG} && make install
   status=$?
   cd ..
