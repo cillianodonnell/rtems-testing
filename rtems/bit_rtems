@@ -313,7 +313,7 @@ esac
 # Only a few BSPs really support MP
 if [ ${ENABLE_RTEMS_MP} = yes ] ; then
   case ${BSP_TO_TEST} in
-    simhppa|cvme961|mvme136|mvme147s|psim|posix|multilib|leon3)
+    simhppa|cvme961|mvme147s|psim|posix|multilib|leon3)
       ENABLE_MP_FLAG="--enable-multiprocessing"
       ;;
     *)

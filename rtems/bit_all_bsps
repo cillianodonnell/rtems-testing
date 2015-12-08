@@ -135,7 +135,7 @@ get_bsps()
       lm32)    all_bsps="lm32_evr" ;;
       m32c)    all_bsps="m32csim" ;;
       m32r)    all_bsps="m32rsim" ;;
-      m68k)    all_bsps="gen68360 gen68360_040 mvme136 mvme147 mvme147s"
+      m68k)    all_bsps="gen68360 gen68360_040 mvme147 mvme147s"
                all_bsps="${all_bsps} mvme162 mvme162lx mvme167 ods68302"
                all_bsps="${all_bsps} mcf5206elite "
                all_bsps="${all_bsps} uC5282 mcf52235 mcf5329"
