@@ -146,7 +146,7 @@ get_bsps()
                all_bsps="${all_bsps} rbtx4925 rbtx4938" ;;
       nios2)   all_bsps="nios2_iss" ;;
       powerpc) all_bsps="psim mcp750 mvme2100 mvme2307 mvme3100"
-               all_bsps="${all_bsps} mpc8260ads ss555 mvme5500 ep1a"
+               all_bsps="${all_bsps} mpc8260ads ss555 mvme5500"
                all_bsps="${all_bsps} pm520_cr825 pm520_ze30"
                all_bsps="${all_bsps} mbx821_001 mbx821_002 mbx821_002b"
                all_bsps="${all_bsps} mbx860_1b mbx860_001b mbx860_002"
