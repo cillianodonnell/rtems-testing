@@ -142,7 +142,7 @@ get_bsps()
                all_bsps="${all_bsps} gen68302 csb360 simcpu32 mrm332 av5282"
                all_bsps="${all_bsps} gen68340 mcf5235 idp pgh360" 
                all_bsps="${all_bsps} m5484FireEngine" ;;
-      mips)    all_bsps="jmr3904 genmongoosev csb350 hurricane"
+      mips)    all_bsps="jmr3904 csb350 hurricane"
                all_bsps="${all_bsps} rbtx4925 rbtx4938" ;;
       nios2)   all_bsps="nios2_iss" ;;
       powerpc) all_bsps="psim mcp750 mvme2100 mvme2307 mvme3100"
