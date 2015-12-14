@@ -40,8 +40,6 @@ lm32_evr-gdb
 lm3s6965
 m32csim
 m32csim-gdb
-m32rsim
-m32rsim-gdb
 or1ksim
 or1ksim-gdb
 pc386

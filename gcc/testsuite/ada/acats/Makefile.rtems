@@ -42,9 +42,6 @@ stamp-targetrun:
   ifeq ($(RTEMS_BSP),lm32_evr)
 	echo "  qemu-lm32_evr -C -l 240 $$"'*' >> $@
   endif # lm32_evr
-  ifeq ($(RTEMS_BSP),m32rsim)
-	echo "  m32rsim -C -l 180 $$"'*' >> $@
-  endif # m32rsim
   ifeq ($(RTEMS_BSP),psim)
 	echo "  psim -C -l 180 $$"'*' >> $@
   endif # psim

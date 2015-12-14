@@ -264,7 +264,7 @@ build_cpu()
       i386)    bsp=pc386        ;;
       lm32)    bsp=lm32_evr     ;;
       m32c)    bsp=m32csim      ;;
-      m32r)    bsp=m32rsim      ;;
+      m32r)    bsp=             ;;
       m68k)    bsp=uC5282       ;;
       mips)    bsp=jmr3904      ;;
       powerpc) bsp=psim         ;;

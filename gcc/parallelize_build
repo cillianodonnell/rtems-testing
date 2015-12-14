@@ -185,7 +185,7 @@ ${BASEDIR}/rtems-testing/gcc/do_one  -B1 -A ${args} h8300
 ${BASEDIR}/rtems-testing/gcc/do_one  -B1 -A ${args} i386 pc386
 ${BASEDIR}/rtems-testing/gcc/do_one  -B1 -A ${args} lm32 lm32_evr
 ${BASEDIR}/rtems-testing/gcc/do_one  -B1 -A ${args} m32c m32csim
-${BASEDIR}/rtems-testing/gcc/do_one  -B1 -A ${args} m32r m32rsim
+${BASEDIR}/rtems-testing/gcc/do_one  -B1 -A ${args} m32r
 ${BASEDIR}/rtems-testing/gcc/do_one  -B1 -A ${args} m68k uC5282
 ${BASEDIR}/rtems-testing/gcc/do_one  -B1 -A ${args} mips jmr3904
 ${BASEDIR}/rtems-testing/gcc/do_one  -B1 -A ${args} powerpc psim

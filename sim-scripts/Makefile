@@ -1,6 +1,6 @@
 INSTALL_DIR=../bin
 GDBSIM_SCRIPTS=bf537Stamp ezkit533 gdbarmsim jmr3904 lm32_evr \
-  m32csim m32rsim or1ksim psim sis erc32 leon2 leon3 simsh v850sim
+  m32csim or1ksim psim sis erc32 leon2 leon3 simsh v850sim
 SKYEYE_SCRIPTS=ant5206 bf537Stamp-skyeye csb337 csb350 csb360 edb7312 \
   ezkit533-skyeye gumstix rtl22xx smdk2410 leon2-skyeye
 
@@ -126,9 +126,6 @@ lm32_evr lm32_evr-gdb: gdb-sim-run.in gdb-sim.in lm32_evr.in
 
 m32csim m32csim-gdb: gdb-sim-run.in gdb-sim.in m32csim.in
 	./mkrun yes M32C m32c m32csim
-
-m32rsim m32rsim-gdb: gdb-sim-run.in gdb-sim.in m32rsim.in
-	./mkrun yes M32R m32r m32rsim
 
 or1ksim or1ksim-gdb: or1ksim.in
 	./mkrun yes OR1K or1k or1ksim

@@ -47,12 +47,6 @@ case $1 in
     DEJABSP=m32csim
     BSP_SIM=m32csim
     ;;
-  m32rsim) 
-    CPU=m32r
-    BSP=m32rsim
-    DEJABSP=m32rsim
-    BSP_SIM=m32rsim
-    ;;
   mcf5206elite) 
     CPU=m68k
     BSP=mcf5206elite

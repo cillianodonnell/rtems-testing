@@ -133,7 +133,7 @@ this target
 | i386-rtems*        | pc386      | qemu
 | lm32-rtems*        | lm32_evr   | gdb
 | m32c-rtems*        | m32csim    | gdb
-| m32r-rtems*        | m32rsim    | gdb
+| m32r-rtems*        | N/A        | not supported
 | m68k-rtems*        | uC5282     | Qemu
 | microblaze-rtems*  | nosim      | not executed
 | mips-rtems*        | jmr3904    | gdb
