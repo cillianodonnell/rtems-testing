@@ -181,7 +181,7 @@ if [ ${do_tools} = "yes" ] ; then
 ${BASEDIR}/rtems-testing/gcc/do_one  -B1 -A ${args} arm edb7312
 ${BASEDIR}/rtems-testing/gcc/do_one  -B1 -A ${args} avr avrtest
 ${BASEDIR}/rtems-testing/gcc/do_one  -B1 -A ${args} bfin eZKit533
-${BASEDIR}/rtems-testing/gcc/do_one  -B1 -A ${args} h8300 h8sim
+${BASEDIR}/rtems-testing/gcc/do_one  -B1 -A ${args} h8300
 ${BASEDIR}/rtems-testing/gcc/do_one  -B1 -A ${args} i386 pc386
 ${BASEDIR}/rtems-testing/gcc/do_one  -B1 -A ${args} lm32 lm32_evr
 ${BASEDIR}/rtems-testing/gcc/do_one  -B1 -A ${args} m32c m32csim

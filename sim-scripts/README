@@ -7,7 +7,6 @@ NOTES:
 [1] The script name is intended to match the name of the BSP it will run
     executables for.  But there are a few scripts which can run multiple BSPs:
 	simsh - 
-	h8sim - h8sim, h8sxsim
 
 [2] The BSPs ant5206, csb350, and csb360 do not run yet on Skyeye.  This
     is a known Skyeye issue being addressed.

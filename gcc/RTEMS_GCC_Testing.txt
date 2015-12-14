@@ -129,7 +129,7 @@ this target
 | arm-rtems*         | edb7312    | Skyeye
 | avr-rtems*         | avrtest    | avrtest
 | bfin-rtems*        | eZKit533   | Skyeye
-| h8300-rtems*       | h8sim      | gdb
+| h8300-rtems*       | N/A        | not supported
 | i386-rtems*        | pc386      | qemu
 | lm32-rtems*        | lm32_evr   | gdb
 | m32c-rtems*        | m32csim    | gdb

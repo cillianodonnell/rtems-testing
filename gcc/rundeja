@@ -65,12 +65,6 @@ case $1 in
     DEJABSP=uC5282
     BSP_SIM=uC5282
     ;;
-  h8sim) 
-    CPU=h8300
-    BSP=h8sim
-    DEJABSP=h8sim
-    BSP_SIM=h8sim
-    ;;
   simsh1) 
     CPU=sh
     BSP=simsh1

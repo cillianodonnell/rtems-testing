@@ -1,5 +1,5 @@
 INSTALL_DIR=../bin
-GDBSIM_SCRIPTS=bf537Stamp ezkit533 gdbarmsim h8sim jmr3904 lm32_evr \
+GDBSIM_SCRIPTS=bf537Stamp ezkit533 gdbarmsim jmr3904 lm32_evr \
   m32csim m32rsim or1ksim psim sis erc32 leon2 leon3 simsh v850sim
 SKYEYE_SCRIPTS=ant5206 bf537Stamp-skyeye csb337 csb350 csb360 edb7312 \
   ezkit533-skyeye gumstix rtl22xx smdk2410 leon2-skyeye
@@ -117,9 +117,6 @@ ezkit533 ezkit533-gdb: gdb-sim-run.in gdb-sim.in ezkit533.in
 
 gdbarmsim gdbarmsim-gdb: gdb-sim-run.in gdb-sim.in gdbarmsim.in
 	./mkrun yes ARM arm gdbarmsim
-
-h8sim h8sim-gdb: gdb-sim-run.in gdb-sim.in h8sim.in
-	./mkrun yes H8300 h8300 h8sim
 
 jmr3904 jmr3904-gdb: gdb-sim-run.in gdb-sim.in jmr3904.in
 	./mkrun yes MIPS mipstx39 jmr3904

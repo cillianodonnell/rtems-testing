@@ -358,7 +358,6 @@ if [ ${needCPU} = yes -a ${needBSP} = yes -a \
     arm-realview_pbx_a9_qemu) dejacfg=rtems-arm-realview_pbx_a9_qemu ;;
     avr-avrtest)          dejacfg=rtems-avr-avrtest ;;
     bfin-eZKit533)        dejacfg=rtems-bfin-nosim ;;
-    h8300-h8sim)          dejacfg=rtems-h8300-h8sim ;;
     i386-pc386|i386-qemu) dejacfg=rtems-i386-qemu ;;
     lm32-lm32_evr)        dejacfg=rtems-lm32-lm32_evr ;;
     m32c-m32csim)         dejacfg=rtems-m32c-m32csim ;;

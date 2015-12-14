@@ -60,9 +60,6 @@ stamp-targetrun:
   ifeq ($(RTEMS_BSP),simsh1)
 	echo "  simsh -C -l 60 $$"'*' >> $@
   endif # simsh1
-  ifeq ($(RTEMS_BSP),h8sim)
-	echo "  h8sim -C -l 60 $$"'*' >> $@
-  endif # h8sim
   ifeq ($(RTEMS_BSP),qemuppc)
 	echo "  qemuppc -C -l 90 $$"'*' >> $@
   endif # qemuppc
