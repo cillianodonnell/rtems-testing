@@ -19,7 +19,7 @@ GENERATED_SCRIPTS=\
 COMPILED_PROGRAMS=usleep
 UNPROCESSED_SCRIPTS=nosim check_endof \
   rtems-gdb-macros-4.7 rtems-gdb-macros-4.8 rtems-gdb-macros-4.9 \
-  rtems-gdb-macros-4.10 rtems-gdb-macros-4.11
+  rtems-gdb-macros-4.10 rtems-gdb-macros-4.11 rtems-gdb-macros-4.12
 
 all: prep ${GENERATED_SCRIPTS} ${COMPILED_PROGRAMS} \
      ${UNPROCESSED_SCRIPTS} install

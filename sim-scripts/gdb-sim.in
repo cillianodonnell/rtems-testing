@@ -19,7 +19,7 @@ USAGE=\
 System V IPC and Coverage are not supported by all BSPs or simulators.
 "
 
-for v in 4.11 4.10 4.9 4.8 4.7 ""
+for v in 4.12 4.11 4.10 4.9 4.8 4.7 ""
 do
   type @CPU_TARGET@-rtems${v}-gdb >/dev/null 2>&1
   if [ $? -eq 0 ] ; then
