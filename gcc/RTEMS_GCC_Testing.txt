@@ -127,7 +127,7 @@ this target
 |==================================================
 | Target             | BSP        | Simulator
 | arm-rtems*         | edb7312    | Skyeye
-| avr-rtems*         | avrtest    | avrtest
+| avr-rtems*         | N/A        | not supported
 | bfin-rtems*        | eZKit533   | Skyeye
 | h8300-rtems*       | N/A        | not supported
 | i386-rtems*        | pc386      | qemu

@@ -258,7 +258,6 @@ build_cpu()
   do
     case $cpu in
       arm)     bsp=edb7312      ;;
-      avr)     bsp=avrtest      ;;
       bfin)    bsp=eZKit533     ;;
       h8300)   bsp=h8sim        ;;
       i386)    bsp=pc386        ;;

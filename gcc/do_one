@@ -356,7 +356,6 @@ if [ ${needCPU} = yes -a ${needBSP} = yes -a \
   case ${cpu}-${bsp} in
     arm-edb7312)          dejacfg=rtems-arm-edb7312 ;;
     arm-realview_pbx_a9_qemu) dejacfg=rtems-arm-realview_pbx_a9_qemu ;;
-    avr-avrtest)          dejacfg=rtems-avr-avrtest ;;
     bfin-eZKit533)        dejacfg=rtems-bfin-nosim ;;
     i386-pc386|i386-qemu) dejacfg=rtems-i386-qemu ;;
     lm32-lm32_evr)        dejacfg=rtems-lm32-lm32_evr ;;

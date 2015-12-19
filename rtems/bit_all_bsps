@@ -124,7 +124,6 @@ get_bsps()
   else
     # RTEMS before 4.10
     case $CPU in   
-      avr)     all_bsps="avrtest" ;;
       bfin)    all_bsps="eZKit533 bf537Stamp" ;;
       arm)     all_bsps="csb336 csb337 csb637 edb7312"
                all_bsps="${all_bsps} rtl22xx rtl22xx_t smdk2410"

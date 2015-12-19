@@ -9,12 +9,11 @@ QEMU_SCRIPTS=pc386 qemuppc qemu-gumstix qemu-leon2 qemu-lm32_evr qemu-or1k \
   uC5282 lm3s6965 realview_pbx_a9_qemu realview_pbx_a9_qemu_smp \
   xilinx_zynq_a9_qemu
 
-OTHER_SCRIPTS=avrtest
 GENERATED_SCRIPTS=\
   ${GDBSIM_SCRIPTS} $(GDBSIM_SCRIPTS:%=%-gdb) \
   ${SKYEYE_SCRIPTS} $(SKYEYE_SCRIPTS:%=%-gdb) \
   ${TSIM_SCRIPTS} $(TSIM_SCRIPTS:%=%-gdb) \
-  ${QEMU_SCRIPTS} ${OTHER_SCRIPTS}
+  ${QEMU_SCRIPTS}
 
 COMPILED_PROGRAMS=usleep
 UNPROCESSED_SCRIPTS=nosim check_endof \
@@ -150,10 +149,6 @@ simsh simsh-gdb: gdb-sim-run.in gdb-sim.in simsh.in
 
 v850sim v850sim-gdb: gdb-sim-run.in gdb-sim.in v850sim.in
 	./mkrun yes V850 v850 v850sim
-
-## AVR Test (uses Simulavrxx)
-avrtest: gdb-sim-run.in avrtest.in
-	./mkrun no AVR avr avrtest
 
 clean:
 	rm -f ${GENERATED_SCRIPTS} ${COMPILED_PROGRAMS}
