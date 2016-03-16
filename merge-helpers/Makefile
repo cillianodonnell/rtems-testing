@@ -1,8 +1,5 @@
 INSTALL_DIR=../bin
 SCRIPTS  = check_submission
-SCRIPTS += commit-with-changelog-diff
-SCRIPTS += commit
-SCRIPTS += mkChangeLogList
 SCRIPTS += prepend
 
 all: prep ${SCRIPTS} install
