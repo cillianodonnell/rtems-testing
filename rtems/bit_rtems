@@ -328,6 +328,12 @@ fi
 # Some CPUs do not have C++ support
 if [ ${ENABLE_RTEMS_CXX} = yes ] ; then
   case ${CPU} in
+    lm32)           # RTEMS PR XXX
+       ENABLE_RTEMS_CXX="--disable-cxx" ;;
+    nios2)          # GCC PR XXX
+       ENABLE_RTEMS_CXX="--disable-cxx" ;;
+    #or1k)          # RTEMS PR XXX
+    #   ENABLE_RTEMS_CXX="--disable-cxx" ;;
     avr|bfin|m32c|m32r|tic4x)
        ENABLE_RTEMS_CXX="--disable-cxx" ;;
     *) ENABLE_RTEMS_CXX="--enable-cxx" ;;
