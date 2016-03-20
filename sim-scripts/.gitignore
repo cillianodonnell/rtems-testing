@@ -1,5 +1,6 @@
 ant5206
 ant5206-gdb
+avrtest
 bf537Stamp
 bf537Stamp-gdb
 bf537Stamp-skyeye
@@ -22,6 +23,8 @@ gdbarmsim
 gdbarmsim-gdb
 gumstix
 gumstix-gdb
+h8sim
+h8sim-gdb
 jmr3904
 jmr3904-gdb
 leon2
@@ -39,6 +42,8 @@ lm32_evr-gdb
 lm3s6965
 m32csim
 m32csim-gdb
+m32rsim
+m32rsim-gdb
 or1ksim
 or1ksim-gdb
 pc386

@@ -1,2 +1,6 @@
 rtems
 network-demos
+log
+parallel_bsps.tmp
+ticker-executables
+
