@@ -1,0 +1,127 @@
+#! /bin/sh
+#
+#  This script automates running Coverity on newlib targeting RTEMS
+#  and submitting the results.
+#
+#       + https://scan.coverity.com/
+#
+#  You have to have an account to view the results
+# 
+
+#
+# TODO:
+#   + parse arguments for some of the hard-coded items.
+#   + better instructions on setup. Where to download, etc.
+#
+
+RTEMS_BIN=/home/joel/rtems-work/tools/4.12/bin
+COVERITY=${HOME}/coverity/cov-analysis-linux64-8.7.0/
+
+
+#
+#  Checks the status returned by executables and exits if it is non-zero.
+#
+check_fatal()
+{
+  if [ $1 -ne 0 ] ; then
+    shift
+    echo "ERROR: $*" >&2
+    exit 1
+  fi
+}
+
+echo $#
+test $# -eq 1
+check_fatal $? "Usage: TARGET"
+
+RTEMS_TARGET=$1
+
+type ${RTEMS_TARGET}-gcc
+check_fatal $? "gcc not in path"
+
+test -d ${COVERITY}
+check_fatal $? "Coverity path not right"
+
+test -d ${COVERITY}/bin
+check_fatal $? "${COVERITY}/bin does not exist"
+
+# Prepend Coverity to our PATH
+export PATH=${COVERITY}/bin:$PATH
+
+# # Configure Coverity for this target compiler
+rm -rf ${COVERITY}/config/coverity_config.xml
+rm -rf ${COVERITY}/config/gcc-config-? ${COVERITY}/config/g++-config-?
+
+cov-configure --gcc
+check_fatal $? "could not coverity configure gcc"
+
+cov-configure --comptype gcc --compiler ${RTEMS_TARGET}-gcc --template
+check_fatal $? "could not coverity configure gcc"
+
+# Clean build directory and start over
+rm     -rf  b-coverity-${RTEMS_TARGET}-newlib
+check_fatal $? "Could not remove build directory"
+mkdir       b-coverity-${RTEMS_TARGET}-newlib
+check_fatal $? "Could not cd into build directory"
+cd          b-coverity-${RTEMS_TARGET}-newlib
+check_fatal $? "Could not cd into build directory"
+
+# iconv settings
+enable_iconv="--enable-newlib-iconv \
+   --enable-newlib-iconv-encodings=big5,cp775,cp850,cp852,cp855,\
+cp866,euc_jp,euc_kr,euc_tw,iso_8859_1,iso_8859_10,iso_8859_11,\
+iso_8859_13,iso_8859_14,iso_8859_15,iso_8859_2,iso_8859_3,\
+iso_8859_4,iso_8859_5,iso_8859_6,iso_8859_7,iso_8859_8,iso_8859_9,\
+iso_ir_111,koi8_r,koi8_ru,koi8_u,koi8_uni,ucs_2,ucs_2_internal,\
+ucs_2be,ucs_2le,ucs_4,ucs_4_internal,ucs_4be,ucs_4le,us_ascii,\
+utf_16,utf_16be,utf_16le,utf_8,win_1250,win_1251,win_1252,\
+win_1253,win_1254,win_1255,win_1256,win_1257,win_1258"
+
+pwd
+#
+# Configure newlib
+../newlib-cygwin/configure \
+    --disable-multilib \
+    ${enable_iconv} \
+    --enable-newlib-io-c99-formats \
+    --enable-threads \
+    --target=${RTEMS_TARGET} \
+    --prefix=/tmp/throw_me_away \
+   >c.log 2>&1
+check_fatal $? "could not configure newlib"
+
+# Build newlib
+cov-build --dir cov-int make >b.log 2>&1
+check_fatal $? "could not make newlib"
+
+# Did we have problems loading the Coverity dynamic library?
+grep -i "ERROR: ld.so:.*" b.log >/dev/null
+if [ $? -ne 1 ] ; then
+  check_fatal 1 "Looks like you have dynamic library issues with Coverity."
+fi
+
+# Did Coverity report something bad?
+# grep -i cata cov-int/build-log.txt >/dev/null
+# if [ $? -ne 1 ] ; then
+#   check_fatal 1 "Catastrophic failures reported by coverity."
+# fi
+
+# Did Coverity report that it had no results?
+grep -i "No files were emitted" cov-int/build-log.txt >/dev/null
+if [ $? -ne 1 ] ; then
+  check_fatal 1 "No output from Coverity.  Something went wrong."
+fi
+
+# Now create the tar file that Coverity wants
+tar czvf newlib-coverity.tar.gz cov-int
+check_fatal $? "could not make newlib-coverity"
+
+curl --form token=BtR7PhfmMTP6Z3BnAU8tNw \
+  --form email=joel.sherrill@gmail.com \
+  --form file=@newlib-coverity.tar.gz \
+  --form version="Master" \
+  --form description="Master (${RTEMS_TARGET})" \
+  https://scan.coverity.com/builds?project=RTEMS-Newlib
+
+# Ran completed OK
+exit 0

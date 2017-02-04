@@ -2,25 +2,26 @@ This directory contains scripts which assist in running Coverity
 on RTEMS and submitting them to the Coverity builder.  You have
 to have an account to view the results of the run.  
 
+NOTE: Please edit the script to change the email address. :)
+
 Coverity is a closed source static code analyser which can detect a variety
 of programming errors. 
 
-  + Instructions: http://scan.coverity.com/self-build/
-  + Results:      http://scan2.coverity.com:9104/
+  + https://scan.coverity.com/
 
 STATUS
 ======
-+ This script has a number of hard-coded variables that should probably
++ These scripts have a number of hard-coded variables that should probably
   be passed in on the command line.
 
 + There are likely errors it does not detect.  So far, it looks like
   a lot can go wrong. :)
 
 + I do not know how to grab the information on a Coverity issue and
-  bring it to the community in a way that is nice yet.  I don't care
-  whether this is automated or not because we don't have many issues.
-  But when we file PRs on Coverity issues, people need to see the report.
+  bring it to the community in a way that is nice yet.  
+
++ We need to decide whether to scan BSPs and tests.
 
 --joel
-13 June 2010
+4 February 2017
 

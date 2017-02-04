@@ -19,14 +19,9 @@
 #   + better instructions on setup. Where to download, etc.
 #
 
-RTEMS_BIN=/opt/rtems-4.11/bin
-COVERITY=${HOME}/prevent-linux-2.4.6
-RTEMS_TARGET=sparc-rtems4.11
-RTEMS_BSP=sis
-#RTEMS_TARGET=i386-rtems4.11
-#RTEMS_BSP=pc386
+RTEMS_BIN=/home/joel/rtems-work/tools/4.12/bin
+COVERITY=${HOME}/coverity/cov-analysis-linux64-8.7.0/
 
-do_mail="yes"
 
 #
 #  Checks the status returned by executables and exits if it is non-zero.
@@ -39,6 +34,19 @@ check_fatal()
     exit 1
   fi
 }
+
+echo $#
+test $# -eq 2
+check_fatal $? "Usage: TARGET BSP"
+
+RTEMS_TARGET=$1
+RTEMS_BSP=$2
+
+case ${RTEMS_BSP} in
+  erc32) SMP="" ;;
+  leon3) SMP="--enable-smp" ;;
+  *)  echo "How to run coverity on ${RTEMS_BSP}" ; exit 1
+esac
 
 type ${RTEMS_TARGET}-gcc
 check_fatal $? "gcc not in path"
@@ -55,31 +63,32 @@ check_fatal $? "For now, Coverity must be run by joel"
 # Prepend Coverity to our PATH
 export PATH=${COVERITY}/bin:$PATH
 
-# Configure Coverity for this target compiler
+# # Configure Coverity for this target compiler
 rm -rf ${COVERITY}/config/coverity_config.xml
 rm -rf ${COVERITY}/config/gcc-config-? ${COVERITY}/config/g++-config-?
 
-cov-configure -co ${RTEMS_BIN}/${RTEMS_TARGET}-gcc
-check_fatal $? "could not coverity configure GCC"
-cov-configure -co ${RTEMS_BIN}/${RTEMS_TARGET}-g++
-check_fatal $? "could not coverity configure g++"
+cov-configure --gcc
+check_fatal $? "could not coverity configure gcc"
+
+cov-configure --comptype gcc --compiler ${RTEMS_TARGET}-gcc --template
+check_fatal $? "could not coverity configure gcc"
 
 # Clean build directory and start over
 rm     -rf  b-coverity-${RTEMS_TARGET}
 check_fatal $? "Could not remove build directory"
-mkdir  -p   b-coverity-${RTEMS_TARGET}/b-${RTEMS_TARGET}
-check_fatal $? "Could not make build directory"
-cd          b-coverity-${RTEMS_TARGET}/b-${RTEMS_TARGET}
-check_fatal $? "Could not cd to build directory"
+mkdir       b-coverity-${RTEMS_TARGET}
+check_fatal $? "Could not cd into build directory"
+cd          b-coverity-${RTEMS_TARGET}
+check_fatal $? "Could not cd into build directory"
 
 # Configure RTEMS
-$r/configure --target=${RTEMS_TARGET} --enable-multilib \
-  --disable-networking --disable-itron --disable-tests \
+$r/configure --target=${RTEMS_TARGET} \
+  ${SMP} --disable-networking --disable-tests \
   --enable-rtemsbsp=${RTEMS_BSP} >c.log 2>&1
 check_fatal $? "could not configure RTEMS"
 
 # Build RTEMS
-cov-build -e emit -o output make -C ${RTEMS_TARGET}/cpukit >b.log 2>&1
+cov-build --dir cov-int make >b.log 2>&1
 check_fatal $? "could not make RTEMS"
 
 # Did we have problems loading the Coverity dynamic library?
@@ -89,48 +98,27 @@ if [ $? -ne 1 ] ; then
 fi
 
 # Did Coverity report something bad?
-grep -i cata output/build.raw >/dev/null
-if [ $? -ne 1 ] ; then
-  check_fatal 1 "Catastrophic failures reported by coverity."
-fi
+# grep -i cata cov-int/build-log.txt >/dev/null
+# if [ $? -ne 1 ] ; then
+#   check_fatal 1 "Catastrophic failures reported by coverity."
+# fi
 
 # Did Coverity report that it had no results?
-grep -i "No files were emitted" output/build.raw >/dev/null
+grep -i "No files were emitted" cov-int/build-log.txt >/dev/null
 if [ $? -ne 1 ] ; then
   check_fatal 1 "No output from Coverity.  Something went wrong."
 fi
 
-# Construct the README that is needed in project.tgz
-cat <<EOF >README
-Joel Sherrill
-joel.sherrill@gmail.com
-RTEMS
-EOF
-
 # Now create the tar file that Coverity wants
-tar czvf project.tgz README emit output
+tar czvf rtems-coverity.tar.gz cov-int
 check_fatal $? "could not make project.tgz"
 
-# If running inside OAR and RTEMS lab, then you will be able to
-# copy the results file to the ftp site and submit it to Coverity.
-if [ ${do_mail} = "yes" ] ; then
-  if [ -d /home/ftp/private/coverity ] ; then
-    echo "Placing project.tgz on RTEMS ftp site."
-    cp project.tgz /home/ftp/private/coverity/
-    echo "Emailing analysis request to Coverity."
-    do_mail_coverity
-  else
-    # There are unfortunately some by hand steps
-    cat <<EOF
-You do not have NFS access to the RTEMS.org ftp site. So you will have
-to copy the project.tgz and email Coverity by hand.
-  
-(1) scp */project.tgz joel@www.rtems.org:/home/ftp/private/coverity/
-
-(2) Send email to Coverity to request a run. (e.g. do_mail_coverity)
-EOF
-  fi
-fi
+curl --form token=ce5hazuV \
+  --form email=joel.sherrill@gmail.com \
+  --form file=@rtems-coverity.tar.gz \
+  --form version="4.11.99.0" \
+  --form description="Master (${RTEMS_BSP})" \
+  https://scan.coverity.com/builds?project=RTEMS
 
 # Ran completed OK
 exit 0

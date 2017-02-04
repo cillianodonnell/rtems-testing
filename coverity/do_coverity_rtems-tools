@@ -1,0 +1,97 @@
+#! /bin/sh
+#
+#  This script automates running Coverity on newlib targeting RTEMS
+#  tools and submitting the results.
+#
+#       + https://scan.coverity.com/
+#
+#  You have to have an account to view the results
+# 
+
+#
+# TODO:
+#   + parse arguments for some of the hard-coded items.
+#   + better instructions on setup. Where to download, etc.
+#
+
+RTEMS_BIN=/home/joel/rtems-work/tools/4.12/bin
+COVERITY=${HOME}/coverity/cov-analysis-linux64-8.7.0/
+
+
+#
+#  Checks the status returned by executables and exits if it is non-zero.
+#
+check_fatal()
+{
+  if [ $1 -ne 0 ] ; then
+    shift
+    echo "ERROR: $*" >&2
+    exit 1
+  fi
+}
+
+type gcc
+check_fatal $? "gcc not in path"
+
+test -d ${COVERITY}
+check_fatal $? "Coverity path not right"
+
+test -d ${COVERITY}/bin
+check_fatal $? "${COVERITY}/bin does not exist"
+
+test -d tools
+check_fatal $? "Are you in the rtems-tools directory?"
+
+test -d tester
+check_fatal $? "Are you in the rtems-tools directory?"
+
+# Prepend Coverity to our PATH
+export PATH=${COVERITY}/bin:$PATH
+
+# # Configure Coverity for this target compiler
+rm -rf ${COVERITY}/config/coverity_config.xml
+rm -rf ${COVERITY}/config/gcc-config-? ${COVERITY}/config/g++-config-?
+
+cov-configure --gcc
+check_fatal $? "could not coverity configure gcc"
+
+# cov-configure --comptype gcc --compiler ${RTEMS_TARGET}-gcc --template
+# check_fatal $? "could not coverity configure gcc"
+
+./waf distclean
+check_fatal $? "waf distclean failed"
+
+# Configure 
+./waf configure >c.log 2>&1
+check_fatal $? "waf configure failed" >c.log 2>&1
+check_fatal $? "could not configure rtems-tools"
+
+# Build newlib
+cov-build --dir cov-int ./waf >b.log 2>&1
+check_fatal $? "could not make rtems-tools"
+
+# Did we have problems loading the Coverity dynamic library?
+grep -i "ERROR: ld.so:.*" b.log >/dev/null
+if [ $? -ne 1 ] ; then
+  check_fatal 1 "Looks like you have dynamic library issues with Coverity."
+fi
+
+# Did Coverity report that it had no results?
+grep -i "No files were emitted" cov-int/build-log.txt >/dev/null
+if [ $? -ne 1 ] ; then
+  check_fatal 1 "No output from Coverity.  Something went wrong."
+fi
+
+# Now create the tar file that Coverity wants
+tar czvf rtems-tools-coverity.tar.gz cov-int
+check_fatal $? "could not make rtems-tools-coverity"
+
+curl --form token=zhfOCWF5jpcB-sGffpvKaQ \
+  --form email=joel.sherrill@gmail.com \
+  --form file=@rtems-tools-coverity.tar.gz \
+  --form version="Master" \
+  --form description="Master (${RTEMS_TARGET})" \
+  https://scan.coverity.com/builds?project=RTEMS-Tools
+
+# Ran completed OK
+exit 0
